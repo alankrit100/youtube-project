@@ -3,65 +3,57 @@ POST http://localhost:5000/api/auth/register
 Content-Type: application/json
 
 {
-    "name": "bajoria",
-    "email": "bajoria1@test.com",
-    "password": "securepassword",
-    "role": "editor"
+  "name": "alankrit2",
+  "email": "alankrit2@test.com",
+  "password": "securepassword",
+  "role": "editor"
 }
-
 
 ### 2. Log In as a Creator to Get a Token
 POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "bajoria1@test.com",
-    "password": "securepassword"
+  "email": "bajoria2@test.com",
+  "password": "securepassword"
 }
-
 
 ### 3. Create a Project (SUCCESS)
 # Use the token from step 2
 POST http://localhost:5000/api/projects
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YmI3NmUwNWUzYWQ4MGE0ZGQ1NWI0ZiIsInJvbGUiOiJlZGl0b3IiLCJpYXQiOjE3NTcxMTY3NDYsImV4cCI6MTc1NzEyMDM0Nn0.UElsphgP4Sn2mx90wrm6tH3XI2tGdqOtXRt8MxjJ-NM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YmJmNTNlZmMwZjhhODYzNzA5NWE1NiIsInJvbGUiOiJjcmVhdG9yIiwiaWF0IjoxNzU3MTQ4NTg2LCJleHAiOjE3NTcxNTIxODZ9.G2D9Kzh3tATYAd1_xZNpWIBwSD6hsBHAUDr_0G6r99A
 
 {
-    "title": "520 am",
-    "description": "The final test project."
+  "title": "1420 pm",
+  "description": "The final test project."
 }
-
-
 
 ### 4. Register a NEW Editor
 POST http://localhost:5000/api/auth/register
 Content-Type: application/json
 
 {
-    "name": "alankrit_editor",
-    "email": "alankrit.editor1@test.com",
-    "password": "editorpassword",
-    "role": "editor"
+  "name": "alankrit_editor",
+  "email": "alankrit.editor1@test.com",
+  "password": "editorpassword",
+  "role": "editor"
 }
-
 
 ### 5. Log In as an Editor to Get a Token
 POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "john.editor@test.com",
-    "password": "editorpassword"
+  "email": "john.editor@test.com",
+  "password": "editorpassword"
 }
-
 
 ### 6. Upload a New Video Draft (SUCCESS)
 # Use the token from step 5, and the project ID from step 3
-POST http://localhost:5000/api/videos/upload/68bb77575e3ad80a4dd55b57
+POST http://localhost:5000/api/videos/upload/68bbf5e9fc0f8a8637095a5c
 Content-Type: multipart/form-data; boundary=boundary
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YmI3NmUwNWUzYWQ4MGE0ZGQ1NWI0ZiIsInJvbGUiOiJlZGl0b3IiLCJpYXQiOjE3NTcxMTY3NDYsImV4cCI6MTc1NzEyMDM0Nn0.UElsphgP4Sn2mx90wrm6tH3XI2tGdqOtXRt8MxjJ-NM
-
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YmJmNjI2ZmMwZjhhODYzNzA5NWE1ZiIsInJvbGUiOiJlZGl0b3IiLCJpYXQiOjE3NTcxNDg3MTAsImV4cCI6MTc1NzE1MjMxMH0.qHbsnu-CPy5vvgis4kk_v4aSoREvBb8CgWqj0NLjlTI
 
 --boundary
 Content-Disposition: form-data; name="title"
@@ -77,3 +69,23 @@ Content-Type: video/mp4
 
 < C:\Users\alank\OneDrive\Desktop\code.mp4
 --boundary--
+
+### Final Test: Approve a Video (SUCCESS)
+# Use the video ID from a successful upload, and a creator's token.
+PUT http://localhost:5000/api/videos/status/68bbf67afc0f8a8637095a62
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YmJmNTNlZmMwZjhhODYzNzA5NWE1NiIsInJvbGUiOiJjcmVhdG9yIiwiaWF0IjoxNzU3MTQ4NTg2LCJleHAiOjE3NTcxNTIxODZ9.G2D9Kzh3tATYAd1_xZNpWIBwSD6hsBHAUDr_0G6r99A
+
+{
+  "status": "approved"
+}
+
+### (Optional) Test: Attempt to Approve a Video (as Editor)
+# This request should FAIL with a 403 Forbidden error
+PUT http://localhost:5000/api/videos/status/VIDEO_ID_HERE
+Content-Type: application/json
+Authorization: Bearer YOUR_EDITOR_TOKEN_HERE
+
+{
+  "status": "approved"
+}
