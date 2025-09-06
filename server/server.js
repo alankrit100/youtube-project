@@ -1,34 +1,51 @@
+require('dotenv').config();
 const express = require('express');
-const dotenv = require('dotenv').config();
-const connectDB = require('./config/db');
-const authRoutes = require('./src/routes/authRoutes');
-const { errorHandler } = require('./middleware/errorMiddleware');
+const mongoose = require('mongoose');
+const app = express();
+const PORT = process.env.PORT || 5000;
+const path = require('path');
 
-// Load environment variables from .env file
-dotenv;
+// Middleware
+app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Connect to MongoDB
+// Database Connection
+const connectDB = async () => {
+    try {
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log('MongoDB connected successfully.');
+    } catch (err) {
+        console.error(err.message);
+        process.exit(1);
+    }
+};
 connectDB();
 
-// Initialize the Express application
-const app = express();
+// === Route Imports ===
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/users'); // Note: This file will be created later
+const projectRoutes = require('./routes/projects');
+const videoRoutes = require('./routes/videos');
 
-// Middleware to parse JSON and URL-encoded data from incoming requests
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
-// Mount our authentication routes.
-// All authentication-related endpoints will now be under the /api/users path.
-app.use('/api/users', authRoutes);
+// === Route Mounting ===
+// This is the correct line for our authentication routes
+app.use('/api/auth', authRoutes);
+// We will mount the users route here later, but for now we'll comment it out
+app.use('/api/users', userRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/videos', videoRoutes);
 
-// Use our custom error handler middleware.
-// This must be placed at the end of all our routes to catch all errors.
-app.use(errorHandler);
+// Health Check Endpoint
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'ok', message: 'API is running' });
+});
 
-// Define a port for the server to listen on.
-const PORT = process.env.PORT || 5000;
+app.get('/', (req, res) => {
+    res.send('Welcome to the Youtube Mediator API!!');
+});
 
-// Start the server
+// Start Server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });

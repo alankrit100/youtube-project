@@ -1,0 +1,79 @@
+### 1. Register a NEW Creator
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+    "name": "bajoria",
+    "email": "bajoria1@test.com",
+    "password": "securepassword",
+    "role": "editor"
+}
+
+
+### 2. Log In as a Creator to Get a Token
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "bajoria1@test.com",
+    "password": "securepassword"
+}
+
+
+### 3. Create a Project (SUCCESS)
+# Use the token from step 2
+POST http://localhost:5000/api/projects
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YmI3NmUwNWUzYWQ4MGE0ZGQ1NWI0ZiIsInJvbGUiOiJlZGl0b3IiLCJpYXQiOjE3NTcxMTY3NDYsImV4cCI6MTc1NzEyMDM0Nn0.UElsphgP4Sn2mx90wrm6tH3XI2tGdqOtXRt8MxjJ-NM
+
+{
+    "title": "520 am",
+    "description": "The final test project."
+}
+
+
+
+### 4. Register a NEW Editor
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+    "name": "alankrit_editor",
+    "email": "alankrit.editor1@test.com",
+    "password": "editorpassword",
+    "role": "editor"
+}
+
+
+### 5. Log In as an Editor to Get a Token
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "john.editor@test.com",
+    "password": "editorpassword"
+}
+
+
+### 6. Upload a New Video Draft (SUCCESS)
+# Use the token from step 5, and the project ID from step 3
+POST http://localhost:5000/api/videos/upload/68bb77575e3ad80a4dd55b57
+Content-Type: multipart/form-data; boundary=boundary
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YmI3NmUwNWUzYWQ4MGE0ZGQ1NWI0ZiIsInJvbGUiOiJlZGl0b3IiLCJpYXQiOjE3NTcxMTY3NDYsImV4cCI6MTc1NzEyMDM0Nn0.UElsphgP4Sn2mx90wrm6tH3XI2tGdqOtXRt8MxjJ-NM
+
+
+
+--boundary
+Content-Disposition: form-data; name="title"
+
+My New Video Draft
+--boundary
+Content-Disposition: form-data; name="description"
+
+This is a draft for approval.
+--boundary
+Content-Disposition: form-data; name="video"; filename="my_video.mp4"
+Content-Type: video/mp4
+
+< C:\Users\alank\OneDrive\Desktop\code.mp4
+--boundary--
